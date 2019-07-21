@@ -1,32 +1,19 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Rocket : MonoBehaviour
 {
     Rigidbody rigidBody;
     AudioSource audioSource;
-<<<<<<< HEAD
-<<<<<<< HEAD
     [SerializeField] float rcsThrust = 250f;
     [SerializeField] float mainThrust = 1100f;
     [SerializeField] AudioClip mainEngine;
-    [SerializeField] AudioClip death;
     [SerializeField] AudioClip success;
+    [SerializeField] AudioClip death;
     enum State {Alive, Dying, Transcending};
 
 
     [SerializeField] State state = State.Alive;
-=======
-    [SerializeField] float rcsThrust = 300f;
-    [SerializeField] float mainThrust = 100f;
->>>>>>> parent of 803a2c2... Rocket wont fly
-=======
-    [SerializeField] float rcsThrust = 300f;
-    [SerializeField] float mainThrust = 100f;
->>>>>>> parent of 803a2c2... Rocket wont fly
 
     // Start is called before the first frame update
     void Start()
@@ -43,18 +30,17 @@ public class Rocket : MonoBehaviour
             RespondToThrustInput();
             RespondToRotateInput();
         }
-
     }
 
     void OnCollisionEnter(Collision collision)
     {
+        if(state != State.Alive) return;
+
         switch (collision.gameObject.tag)
         {
             case "Friendly":
-                print("Ok");
+                // do nothing
                 break;
-<<<<<<< HEAD
-<<<<<<< HEAD
             case "Finish":
                 StartSuccessSequence();
                 break;
@@ -69,7 +55,7 @@ public class Rocket : MonoBehaviour
         state = State.Transcending;
         audioSource.Stop();
         audioSource.PlayOneShot(success);
-        Invoke("LoadNextLevel", 1f); //parameterize this time
+        Invoke("LoadNextLevel", 1f); // parameterise time
     }
 
     private void StartDeathSequence()
@@ -77,10 +63,10 @@ public class Rocket : MonoBehaviour
         state = State.Dying;
         audioSource.Stop();
         audioSource.PlayOneShot(death);
-        Invoke("LoadFirstLevel", 1f);
+        Invoke("LoadFirstLevel", 1f); // parameterise time
     }
 
-    private void LoadFirstLevel()    
+    private void LoadFirstLevel()
     {
         SceneManager.LoadScene(0);
     }
@@ -91,41 +77,10 @@ public class Rocket : MonoBehaviour
     }
 
     private void RespondToThrustInput()
-=======
-            case "Fuel":
-                print("Fuel");
-                break;
-            default:
-                print("Dead");
-                break;
-        }
-    }
-=======
-            case "Fuel":
-                print("Fuel");
-                break;
-            default:
-                print("Dead");
-                break;
-        }
-    }
->>>>>>> parent of 803a2c2... Rocket wont fly
-
-    private void Thrust()
->>>>>>> parent of 803a2c2... Rocket wont fly
     {
-        float thrustThisFrame = mainThrust * Time.deltaTime;
         if (Input.GetKey(KeyCode.Space))
         {
-<<<<<<< HEAD
-            ApplyThrust(thrustThisFrame);
-=======
-            rigidBody.AddRelativeForce(thrustThisFrame * Vector3.up);
-            if (!audioSource.isPlaying) //so audio doesnt play on top of itself
-            {
-                audioSource.Play();
-            }
->>>>>>> parent of 803a2c2... Rocket wont fly
+            ApplyThrust();
         }
         else
         {
@@ -133,8 +88,9 @@ public class Rocket : MonoBehaviour
         }
     }
 
-    private void ApplyThrust(float thrustThisFrame)
+    private void ApplyThrust()
     {
+        float thrustThisFrame = mainThrust * Time.deltaTime;
         rigidBody.AddRelativeForce(thrustThisFrame * Vector3.up);
         if (!audioSource.isPlaying) //so audio doesnt play on top of itself
         {
@@ -148,11 +104,11 @@ public class Rocket : MonoBehaviour
 
         float rotationThisFrame = rcsThrust * Time.deltaTime;
 
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.A) && (state != State.Dying))
         {
             transform.Rotate(Vector3.forward * rotationThisFrame);
         }
-        else if (Input.GetKey(KeyCode.D))
+        else if (Input.GetKey(KeyCode.D) && (state != State.Dying))
         {
             transform.Rotate(-Vector3.forward * rotationThisFrame);
         }
