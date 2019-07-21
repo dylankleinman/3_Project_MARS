@@ -1224,7 +1224,7 @@ PrefabInstance:
     - target: {fileID: 5550833151881242445, guid: 0d5ae28c2f5c84bafbe9eef5b19d7de9,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 50.24842
+      value: 34.8508
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0d5ae28c2f5c84bafbe9eef5b19d7de9, type: 3}
@@ -1661,6 +1661,26 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cffe8a92edd0a47189290604d2c1ba25, type: 3}
+--- !u!1 &1432511072 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5550833151881242433, guid: 0d5ae28c2f5c84bafbe9eef5b19d7de9,
+    type: 3}
+  m_PrefabInstance: {fileID: 1029617439}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1432511073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1432511072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f982f70f00a7f4df793945b987f92708, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementVector: {x: 10, y: 10, z: 0}
+  period: 4
 --- !u!4 &1546240257 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7548299516296089404, guid: cffe8a92edd0a47189290604d2c1ba25,
