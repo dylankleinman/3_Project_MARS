@@ -161,8 +161,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5791df6c9e88e4ae1be3bd3c7cf998cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rcsThrust: 250
-  mainThrust: 1100
+  rcsRespondToThrustInput: 300
+  mainRespondToThrustInput: 100
+  mainEngine: {fileID: 8300000, guid: cf4736d8d3ba44965a0f91a269a2bef5, type: 3}
+  death: {fileID: 8300000, guid: 319e744d722b54eb488098421a5bdcf5, type: 3}
+  state: 0
 --- !u!82 &7937764484365114834
 AudioSource:
   m_ObjectHideFlags: 0
