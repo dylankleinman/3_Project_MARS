@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class Rocket : MonoBehaviour
@@ -16,31 +17,57 @@ public class Rocket : MonoBehaviour
     [SerializeField] ParticleSystem mainEngineParticles;
     [SerializeField] ParticleSystem successParticles;
     [SerializeField] ParticleSystem deathParticles;
-    enum State {Alive, Dying, Transcending};
+    bool isTransitioning = false;
 
-
-    [SerializeField] State state = State.Alive;
+    private int currentLevel;
+    private int totalScenes;
+    [SerializeField] bool collisionToggle = false;
 
     // Start is called before the first frame update
     void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
         audioSource = GetComponent<AudioSource>();
+        currentLevel = SceneManager.GetActiveScene().buildIndex;
+        totalScenes = SceneManager.sceneCountInBuildSettings;
+        print(totalScenes);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(state == State.Alive)
+        if(!isTransitioning)
         {
             RespondToThrustInput();
             RespondToRotateInput();
+            RespondToQuitInput();
+            if (Debug.isDebugBuild) RespondToDebugKeys();  //only allow debug keys for debut mode
+        }
+    }
+
+    private void RespondToQuitInput()
+    {
+        if (Input.GetKey(KeyCode.Q))
+        {
+            LoadFirstLevel();
+        }
+    }
+
+    private void RespondToDebugKeys()
+    {
+        if (Input.GetKey(KeyCode.C))
+        {
+            collisionToggle = !collisionToggle;
+        }
+        if (Input.GetKey(KeyCode.L))
+        {
+            LoadNextLevel();
         }
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        if(state != State.Alive) return;
+        if(isTransitioning) return;
 
         switch (collision.gameObject.tag)
         {
@@ -51,14 +78,14 @@ public class Rocket : MonoBehaviour
                 StartSuccessSequence();
                 break;
             default:
-                StartDeathSequence();
+                if(!collisionToggle) StartDeathSequence();
                 break;
         }
     }
 
     private void StartSuccessSequence()
     {
-        state = State.Transcending;
+        isTransitioning = true;
         audioSource.Stop();
         audioSource.PlayOneShot(success);
         successParticles.Play();
@@ -67,11 +94,16 @@ public class Rocket : MonoBehaviour
 
     private void StartDeathSequence()
     {
-        state = State.Dying;
+        isTransitioning = true;
         audioSource.Stop();
         audioSource.PlayOneShot(death);
         deathParticles.Play();
-        Invoke("LoadFirstLevel", levelLoadDelay); // parameterise time
+        Invoke("ReloadLevel", levelLoadDelay); // parameterise time
+    }
+
+    private void ReloadLevel()
+    {
+        SceneManager.LoadScene(currentLevel);
     }
 
     private void LoadFirstLevel()
@@ -81,7 +113,15 @@ public class Rocket : MonoBehaviour
 
     private void LoadNextLevel()
     {
-        SceneManager.LoadScene(1); // todo allow for more levels
+        //todo create menu screen and winning screen instead of bringing back to first level
+        if (currentLevel + 1 == totalScenes)
+        {
+           SceneManager.LoadScene(2);
+        }
+        else
+        {
+            SceneManager.LoadScene(currentLevel + 1);
+        }
     }
 
     private void RespondToThrustInput()
@@ -92,9 +132,14 @@ public class Rocket : MonoBehaviour
         }
         else
         {
-            audioSource.Stop();
-            mainEngineParticles.Stop();
+            StopApplyThrust();
         }
+    }
+
+    private void StopApplyThrust()
+    {
+        audioSource.Stop();
+        mainEngineParticles.Stop();
     }
 
     private void ApplyThrust()
@@ -110,20 +155,22 @@ public class Rocket : MonoBehaviour
 
     private void RespondToRotateInput()
     {
-        rigidBody.freezeRotation = true; //take manual control of rotation
-
         float rotationThisFrame = rcsThrust * Time.deltaTime;
+        if (Input.GetKey(KeyCode.A) && (!isTransitioning))
+        {
+            RotateManually(rotationThisFrame);
+        }
+        else if (Input.GetKey(KeyCode.D) && (!isTransitioning))
+        {
+            RotateManually(-rotationThisFrame);
+        }
 
-        if (Input.GetKey(KeyCode.A) && (state != State.Dying))
-        {
-            transform.Rotate(Vector3.forward * rotationThisFrame);
-        }
-        else if (Input.GetKey(KeyCode.D) && (state != State.Dying))
-        {
-            transform.Rotate(-Vector3.forward * rotationThisFrame);
-        }
-        rigidBody.freezeRotation = false; //resume control of rotation
     }
 
-
+    private void RotateManually(float rotationThisFrame)
+    {
+        rigidBody.freezeRotation = true; //take manual control of rotation
+        transform.Rotate(Vector3.forward * rotationThisFrame);
+        rigidBody.freezeRotation = false; //resume control of rotation
+    }
 }

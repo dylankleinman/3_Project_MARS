@@ -19,7 +19,6 @@ public class Oscillator : MonoBehaviour
     void Start()
     {
         startingPos = transform.position;
-        print(startingPos);
     }
 
     // Update is called once per frame
@@ -37,6 +36,5 @@ public class Oscillator : MonoBehaviour
         movementFactor = rawSinWave / 2f;
         Vector3 offset = movementVector * movementFactor;
         transform.position = startingPos + offset;
-        print("hello");
     }
 }
